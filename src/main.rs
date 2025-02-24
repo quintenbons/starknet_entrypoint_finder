@@ -1,5 +1,6 @@
 mod cli;
 
+use clap::ArgMatches;
 use cli::{
     available_commands::{AvailableCommand, available_commands},
     commands::{
@@ -9,21 +10,19 @@ use cli::{
     },
 };
 
-fn main() {
-    // Define & check command format
-    let cmd_matches = available_commands();
+fn handle_command<C: Command>(command: C, matches: &ArgMatches, substr: &str) {
+    let cmd_exec_args = command.parse(matches.subcommand_matches(substr).unwrap());
+    command.execute(cmd_exec_args);
+}
 
-    // Both following calls should never fail here as the `clap` module took care of cmd checking previously
+fn main() {
+    let cmd_matches = available_commands();
     let subcommand = cmd_matches.subcommand_name().unwrap();
     let subcommand = AvailableCommand::from_str(subcommand).unwrap();
 
-    // Get command instance
-    let command: Box<dyn Command> = match subcommand {
-        AvailableCommand::List => Box::new(MapEntryPointsCommand),
-        AvailableCommand::GetName => Box::new(GetEntrypointNameCommand),
-        AvailableCommand::GetHash => Box::new(GetEntrypointHashCommand),
+    match subcommand {
+        AvailableCommand::List => handle_command(MapEntryPointsCommand, &cmd_matches, subcommand.as_str()),
+        AvailableCommand::GetName => handle_command(GetEntrypointNameCommand, &cmd_matches, subcommand.as_str()),
+        AvailableCommand::GetHash => handle_command(GetEntrypointHashCommand, &cmd_matches, subcommand.as_str()),
     };
-
-    let cmd_exec_args = command.parse(cmd_matches.subcommand_matches(subcommand.as_str()).unwrap());
-    command.execute(cmd_exec_args);
 }
