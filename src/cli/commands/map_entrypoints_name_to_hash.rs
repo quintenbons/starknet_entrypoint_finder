@@ -2,15 +2,16 @@ use std::{collections::HashMap, fs::File};
 use starknet::core::types::Felt;
 use starknet::core::utils::starknet_keccak;
 
+use crate::cli::available_commands::FILEARG;
+
 use super::{Command, ParseResult, ParsingErrors, ContractClass};
-use crate::cli::available_commands::AvailableCommandArguments;
 
 pub struct MapEntryPointsCommand;
 
 impl Command for MapEntryPointsCommand {
     fn parse(&self, command_args: &clap::ArgMatches) -> ParseResult {
         // Parse command arg: file name
-        let file_path = command_args.value_of(AvailableCommandArguments::File.as_str()).unwrap();
+        let file_path = command_args.value_of(FILEARG).unwrap();
 
         // Open json file
         let file_error_msg = ParsingErrors::FileNotOpenable(file_path).to_string();

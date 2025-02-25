@@ -1,8 +1,10 @@
 mod cli;
 
+use core::panic;
+
 use clap::ArgMatches;
 use cli::{
-    available_commands::{AvailableCommand, available_commands},
+    available_commands::{available_commands, GET_HASH, GET_NAME, LIST},
     commands::{
         get_entrypoint_hash::GetEntrypointHashCommand,
         get_entrypoint_name::GetEntrypointNameCommand,
@@ -16,13 +18,13 @@ fn handle_command<C: Command>(command: C, matches: &ArgMatches, substr: &str) {
 }
 
 fn main() {
-    let cmd_matches = available_commands();
-    let subcommand = cmd_matches.subcommand_name().unwrap();
-    let subcommand = AvailableCommand::from_str(subcommand).unwrap();
+    let app = available_commands();
+    let matches = app.get_matches();
 
-    match subcommand {
-        AvailableCommand::List => handle_command(MapEntryPointsCommand, &cmd_matches, subcommand.as_str()),
-        AvailableCommand::GetName => handle_command(GetEntrypointNameCommand, &cmd_matches, subcommand.as_str()),
-        AvailableCommand::GetHash => handle_command(GetEntrypointHashCommand, &cmd_matches, subcommand.as_str()),
+    match matches.subcommand_name() {
+        Some(LIST) => handle_command(MapEntryPointsCommand, &matches, LIST),
+        Some(GET_NAME) => handle_command(GetEntrypointNameCommand, &matches, GET_NAME),
+        Some(GET_HASH) => handle_command(GetEntrypointHashCommand, &matches, GET_HASH),
+        _ => panic!("Unrecognized arguments. Use --help for more information"),
     };
 }

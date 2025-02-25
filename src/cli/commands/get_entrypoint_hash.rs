@@ -1,14 +1,14 @@
 use starknet::core::utils::starknet_keccak;
 
 use super::{Command, ParseResult, ParsingErrors};
-use crate::cli::available_commands::AvailableCommandArguments;
+use crate::cli::available_commands::NAMEARG;
 
 pub struct GetEntrypointHashCommand;
 
 impl Command for GetEntrypointHashCommand {
     fn parse(&self, command_args: &clap::ArgMatches) -> ParseResult {
         // Parse command arg: entrypoint name
-        let name = command_args.value_of(AvailableCommandArguments::Name.as_str()).unwrap().to_string();
+        let name = command_args.value_of(NAMEARG).unwrap().to_string();
 
         ParseResult::GetEntryPointHash { name }
     }

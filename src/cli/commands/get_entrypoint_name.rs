@@ -3,15 +3,15 @@ use std::fs::File;
 use starknet::core::{types::Felt, utils::starknet_keccak};
 
 use super::{Command, ParseResult, ParsingErrors, ContractClass};
-use crate::cli::available_commands::AvailableCommandArguments;
+use crate::cli::available_commands::{FILEARG, HASHARG};
 
 pub struct GetEntrypointNameCommand;
 
 impl Command for GetEntrypointNameCommand {
     fn parse(&self, command_args: &clap::ArgMatches) -> ParseResult {
         // Parse command args: file name & entrypoint hash
-        let file_path = command_args.value_of(AvailableCommandArguments::File.as_str()).unwrap();
-        let hash = command_args.value_of(AvailableCommandArguments::Hash.as_str()).unwrap();
+        let file_path = command_args.value_of(FILEARG).unwrap();
+        let hash = command_args.value_of(HASHARG).unwrap();
 
         // Open json file
         let file_error_msg = ParsingErrors::FileNotOpenable(file_path).to_string();
